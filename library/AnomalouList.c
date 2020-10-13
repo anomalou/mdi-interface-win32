@@ -10,7 +10,6 @@ void AddItem(HWND item){
     if(head == NULL){
             head = malloc(sizeof(struct NODE));
             head->header = item;
-            head->editFlag = 1;
             head->next = NULL;
     }else{
         struct NODE *node = head;
@@ -20,7 +19,6 @@ void AddItem(HWND item){
         node->next = malloc(sizeof(struct NODE));
         node = node->next;
         node->header = item;
-        node->editFlag = 1;
         node->next = NULL;
     }
 }

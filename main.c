@@ -14,9 +14,6 @@
 #define TBM_TILE 102
 #define AWM_TEXT 2000
 #define AWM_SENDTEXT 2001
-#define AWM_RESET 2002
-
-BYTE editFlag;
 
 
 HINSTANCE hInst;
@@ -60,7 +57,7 @@ void RegMainWindow(){
 
     RegisterClass(&class);
 
-    mainHWND = CreateWindow(L"BaseWindow", L"Main window", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 500, 200, NULL, NULL, hInst, NULL);
+    mainHWND = CreateWindow(L"BaseWindow", L"Main window", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInst, NULL);
     ShowWindow(mainHWND, SW_NORMAL);
 
     HMENU hMenu = CreateMenu();
@@ -92,7 +89,7 @@ LRESULT CALLBACK WinProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam){
     HWND mdiHWND;
     DWORD ol;
 
-    LPSTR str = malloc(sizeof(CHAR) * 256);
+    LPSTR str = malloc(sizeof(CHAR) * 1024);
 
     LONG_PTR data = GetWindowLongPtr(hwnd, GWLP_USERDATA);
     
@@ -108,15 +105,10 @@ LRESULT CALLBACK WinProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam){
         case AWM_SENDTEXT:
         {
             struct NODE *node = head;
+            SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)lparam);
             while(node != NULL){
-                if(node->editFlag == 1){
-                    node->editFlag = 0;
-                    SendMessageA(node->header, AWM_TEXT, 0, (LPSTR)lparam);
-                    node = node->next;
-                    if(node == NULL){
-                        SendMessage(hwnd, AWM_RESET, 0, 0);
-                    }
-                }
+                SendMessageA(node->header, AWM_TEXT, 0, (LPSTR)lparam);
+                node = node->next;
             }
         }
         break;
@@ -141,7 +133,7 @@ LRESULT CALLBACK WinProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam){
                         ofn.hwndOwner = clientHWND;
                         ofn.lpstrFile = filePath;
                         ofn.nMaxFile = sizeof(WCHAR) * 256;
-                        ofn.lpstrFilter = L"txt\0*.txt\0";
+                        ofn.lpstrFilter = L"all\0*.*\0";
                         ofn.nFilterIndex = 1;
                         ofn.lpstrFileTitle = NULL;
                         ofn.nMaxFileTitle = 0;
@@ -175,15 +167,6 @@ LRESULT CALLBACK WinProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam){
 
         }
         break;
-        case AWM_RESET:
-        {
-            struct NODE* node = head;
-            while(node != NULL){
-                node->editFlag = 1;
-                node = node->next;
-            }
-        }
-        break;
         case WM_DESTROY:
             PostQuitMessage(0);
         break;
@@ -202,7 +185,7 @@ LRESULT CALLBACK ChildProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam){
 
     RECT size;
 
-    LPSTR str = malloc(sizeof(CHAR) * 256);
+    LPSTR str = malloc(sizeof(CHAR) * 1024);
 
     if(msg == WM_CREATE){
         LoadLibrary(TEXT("Msftedit.dll"));
@@ -218,8 +201,8 @@ LRESULT CALLBACK ChildProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam){
             switch(HIWORD(wparam)){
                 case EN_CHANGE:
                 {
-                    LPSTR str = malloc(sizeof(CHAR) * 256);
-                    GetWindowTextA(textEdit, str, 256);
+                    LPSTR str = malloc(sizeof(CHAR) * 1024);
+                    GetWindowTextA(textEdit, str, 1024);
                     SendMessageA(mainHWND, AWM_SENDTEXT, 0, str);
                 }
                 break;

@@ -5,7 +5,6 @@
 
 struct NODE{
     HWND header;
-    BYTE editFlag;
     struct NODE *next;
 };
 
