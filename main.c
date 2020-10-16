@@ -2,7 +2,7 @@
 #define UNICODE
 
 
-#include "library/AnomalouList.h"
+#include "library/List.h"
 #include <windows.h>
 #include <winuser.h>
 #include <commdlg.h>
@@ -16,10 +16,12 @@
 #define AWM_SENDTEXT 2001
 
 
+
 HINSTANCE hInst;
 
 HWND mainHWND;
 HWND clientHWND;
+HWND mdiHWND;
 
 int num;
 
@@ -207,6 +209,9 @@ LRESULT CALLBACK ChildProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam){
                 }
                 break;
             }
+        break;
+        case WM_CHILDACTIVATE:
+            mdiHWND = hwnd;
         break;
         case WM_PAINT:
             hdc = BeginPaint(hwnd, &ps);

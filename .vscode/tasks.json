@@ -22,9 +22,9 @@
 			"command": "C:\\Program Files\\mingw-w64\\x86_64-8.1.0-posix-seh-rt_v6-rev0\\mingw64\\bin\\gcc.exe",
 			"args": [
 				"-c",
-				"library/AnomalouList.c",
+				"library/List.c",
 				"-o",
-				"AnomalouList.o"
+				"List.o"
 			]
 		},
 		{
@@ -35,7 +35,7 @@
 				"-o",
 				"${fileBasenameNoExtension}",
 				"${fileDirname}\\${fileBasenameNoExtension}.o",
-				"AnomalouList.o",
+				"List.o",
 				"-lgdi32",
 				"-lcomdlg32"
 			],
